@@ -31,16 +31,31 @@ Q-러닝은 모델 없이(model-free) 환경에 대한 사전 지식 없이 학�
 
     여기서 $\gamma$는 할인율(discount factor, $0 \le \gamma \le 1$)로, 현재 보상 대비 미래 보상의 가치를 얼마나 크게 볼 것인지를 결정합니다.
 
-* **벨만 최적 방정식 (Bellman Optimality Equation for Q-function)**:
-    최적의 행동-가치 함수 $Q^*(s,a)$는 모든 상태 $s$와 행동 $a$에 대해 다음 벨만 방정식을 만족합니다. 이는 현재 상태 $s$에서 행동 $a$를 취했을 때의 즉각적인 보상 $r$과, 다음 상태 $s'$에서 가능한 모든 행동 $a'$ 중 가장 큰 Q-값을 선택했을 때의 할인된 미래 가치의 합으로 표현됩니다.
-    $Q^*(s,a) = E[R\_{t+1} + \gamma \max_{a'} Q^*(S\_{t+1}, a') | S\_t=s, A\_t=a]$
+* **벨만 최적 방정식 (Bellman Optimality Equation for Q-function)**  
+  최적의 행동-가치 함수 \(Q^*(s,a)\)는 모든 상태 \(s\)와 행동 \(a\)에 대해 다음 방정식을 만족합니다.  
+  이는 현재 상태 \(s\)에서 행동 \(a\)를 취했을 때의 즉각적인 보상 \(r\)과,  
+  다음 상태 \(s'\)에서 가능한 모든 행동 \(a'\) 중 최대 Q-값을 선택했을 때의 할인된 미래 가치의 합으로 표현됩니다.  
+  $$
+    Q^*(s,a) \;=\; \mathbb{E}\bigl[R_{t+1} + \gamma \max_{a'} Q^*(S_{t+1},a') \;\big|\; S_t=s,\;A_t=a\bigr].
+  $$
+  결정론적 환경(상태 전이와 보상이 고정)에서는 기대값 연산을 생략하고  
+  $$
+    Q^*(s,a) = r + \gamma \max_{a'} Q^*(s',a')
+  $$
+  로 간단히 표현할 수 있습니다.
 
-    일반적으로 상태 전이와 보상이 결정론적(deterministic)이라고 가정하면, $Q^*(s,a) = r + \gamma \max_{a'} Q^*(s', a')$ 로 단순화할 수 있습니다.
-
-* **Q-러닝 업데이트 규칙 (시간차 학습, Temporal Difference Learning)**:
-    Q-러닝은 시간차 학습을 통해 $Q^*(s,a)$를 반복적으로 추정합니다. 현재의 Q 값 $Q(s,a)$와 시간차 목표(TD Target) $r + \gamma \max_{a'} Q(s',a')$ 사이의 오차를 줄이는 방향으로 Q 값을 업데이트합니다.
-    $Q(s,a) \leftarrow Q(s,a) + \alpha [r + \gamma \max_{a'} Q(s', a') - Q(s,a)]$
-    여기서 $\alpha$는 학습률(learning rate)입니다.
+* **Q-러닝 업데이트 규칙 (시간차 학습, Temporal Difference Learning)**  
+  Q-러닝은 시간차 목표(TD Target)  
+  $$
+    y \;=\; r + \gamma \max_{a'} Q(s',a')
+  $$
+  과 현재 예측 \(Q(s,a)\) 간의 오차를 줄이도록 Q 값을 반복 갱신합니다.  
+  $$
+    Q(s,a) \;\leftarrow\; Q(s,a) + \alpha \,\bigl[y - Q(s,a)\bigr]
+    \;=\;
+    Q(s,a) + \alpha \,\bigl[r + \gamma \max_{a'} Q(s',a') - Q(s,a)\bigr],
+  $$
+  여기서 \(\alpha\)는 학습률(learning rate)입니다.  
 
 ---
 
