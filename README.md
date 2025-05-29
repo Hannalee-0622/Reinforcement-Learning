@@ -27,12 +27,14 @@ Q-러닝은 모델 없이(model-free) 환경에 대한 사전 지식 없이 학�
 
 * **행동-가치 함수 (Action-Value Function, Q-function, $Q(s, a)$)**:
     상태 $s$에서 행동 $a$를 취하고 그 이후 특정 정책 $\pi$를 따랐을 때 얻을 수 있는 미래 누적 보상의 기댓값을 의미합니다.
-    $Q^{\pi}(s,a) = E_{\pi}[R_{t+1} + \gamma R_{t+2} + \gamma^2 R_{t+3} + \ldots | S_t=s, A_t=a]$
+  $Q^{\pi}(s,a) = E_{\pi}[R\_{t+1} + \gamma R\_{t+2} + \gamma^2 R\_{t+3} + \ldots | S\_t=s, A\_t=a]$
+
     여기서 $\gamma$는 할인율(discount factor, $0 \le \gamma \le 1$)로, 현재 보상 대비 미래 보상의 가치를 얼마나 크게 볼 것인지를 결정합니다.
 
 * **벨만 최적 방정식 (Bellman Optimality Equation for Q-function)**:
     최적의 행동-가치 함수 $Q^*(s,a)$는 모든 상태 $s$와 행동 $a$에 대해 다음 벨만 방정식을 만족합니다. 이는 현재 상태 $s$에서 행동 $a$를 취했을 때의 즉각적인 보상 $r$과, 다음 상태 $s'$에서 가능한 모든 행동 $a'$ 중 가장 큰 Q-값을 선택했을 때의 할인된 미래 가치의 합으로 표현됩니다.
-    $Q^*(s,a) = E[R_{t+1} + \gamma \max_{a'} Q^*(S_{t+1}, a') | S_t=s, A_t=a]$
+    $Q^*(s,a) = E[R\_{t+1} + \gamma \max_{a'} Q^*(S\_{t+1}, a') | S\_t=s, A\_t=a]$
+
     일반적으로 상태 전이와 보상이 결정론적(deterministic)이라고 가정하면, $Q^*(s,a) = r + \gamma \max_{a'} Q^*(s', a')$ 로 단순화할 수 있습니다.
 
 * **Q-러닝 업데이트 규칙 (시간차 학습, Temporal Difference Learning)**:
@@ -56,7 +58,7 @@ Q-러닝은 모델 없이(model-free) 환경에 대한 사전 지식 없이 학�
 
 * **손실 함수 (Loss Function)**:
     DQN은 Q-러닝의 업데이트 목표와 신경망의 예측값 간의 오차를 최소화하도록 학습됩니다. 주로 평균 제곱 오차(Mean Squared Error, MSE)를 손실 함수로 사용합니다.
-    * 타겟 Q-값 (TD Target): $y_j = \begin{cases} r_j & \text{if episode terminates at step } j+1 \\ r_j + \gamma \max_{a'} Q(s'_j, a'; \theta^-) & \text{otherwise} \end{cases}$
+    * 타겟 Q-값 (TD Target): $y_j = \begin{cases} r_j & \text{if episode terminates at step } j+1 \\ r_j + \gamma \max_{a'} Q(s'\_j, a'; \theta^-) & \text{otherwise} \end{cases}$
         (여기서 $\theta^-$는 타겟 네트워크의 파라미터입니다. 아래 설명 참조)
     * 손실 함수: $L(\theta) = E_{ (s,a,r,s') \sim U(D) } [ (y_j - Q(s_j, a_j; \theta))^2 ]$
         ($U(D)$는 경험 리플레이 버퍼 $D$에서 샘플링된 경험 분포)
