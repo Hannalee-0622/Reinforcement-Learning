@@ -185,10 +185,11 @@ DQN은 안정적이고 효율적인 학습을 위해 몇 가지 핵심 기법을
       ```python
       epsilon = max(epsilon_min, epsilon * epsilon_decay)
       ```  
-      또는 LaTeX로:
-      $$
-        \epsilon = \max\bigl(\epsilon_{\min},\,\epsilon\cdot\epsilon_{\text{decay}}\bigr)
-      $$
+      * **입실론 값 감쇠**  
+  <p align="center">
+    <img src="https://latex.codecogs.com/png.latex?\dpi{120}&space;\epsilon&space;=&space;\max\bigl(\epsilon_{\min},\;\epsilon\cdot\epsilon_{\text{decay}}\bigr)" alt="epsilon update" />
+  </p>
+
     f.  **결과 출력**: 현재 에피소드 번호, 총 보상, 현재 입실론 값 등을 출력하여 학습 진행 상황을 모니터링합니다.
 3.  **학습 완료 후**: 학습된 모델을 사용하여 실제 환경에서 에이전트가 어떻게 행동하는지 테스트하고 시각화할 수 있습니다. (코드의 마지막 `rewards` 리스트를 사용한 그래프 플로팅 및 학습된 모델 테스트 부분)
 
