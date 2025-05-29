@@ -64,14 +64,16 @@ Q-러닝은 모델 없이(model-free) 환경에 대한 사전 지식 없이 학�
 * **손실 함수 (Loss Function)**:
     DQN은 Q-러닝의 업데이트 목표와 신경망의 예측값 간의 오차를 최소화하도록 학습됩니다. 주로 평균 제곱 오차(Mean Squared Error, MSE)를 손실 함수로 사용합니다.
     * 타겟 Q-값 (TD Target)**:
-      $$
-      y_j = \begin{cases}
-      r_j & \text{if episode terminates at step } j+1 \\
-      r_j + \gamma \max_{a'} Q(s'\_j, a'; \theta^-) & \text{otherwise}
-      \end{cases}
-      $$
+      <p align="center">
+    <img src="https://latex.codecogs.com/png.latex?\dpi{120}&space;y_j&space;=&space;\begin{cases}
+      r_j, & \text{if episode terminates at step }\,j+1\\
+      r_j&space;+&space;\gamma\max_{a'}Q(s'_j,a';\theta^-),&\text{otherwise}
+    \end{cases}" alt="TD Target" />
+  </p>  
       (여기서 $\theta^-$는 타겟 네트워크의 파라미터입니다. 아래 설명 참조)
-    * 손실 함수: $L(\theta) = E_{ (s,a,r,s') \sim U(D) } [ (y_j - Q(s_j, a_j; \theta))^2 ]$
+    * 손실 함수: <p align="center">
+    <img src="https://latex.codecogs.com/png.latex?\dpi{120}&space;L(\theta)&space;=&space;\mathbb{E}_{(s,a,r,s')\sim\mathcal{U}(D)}\bigl[\bigl(y_j&space;-&space;Q(s_j,a_j;\theta)\bigr)^2\bigr]" alt="DQN Loss" />
+  </p> 
         ($U(D)$는 경험 리플레이 버퍼 $D$에서 샘플링된 경험 분포)
 
 * **옵티마이저 (Optimizer)**:
