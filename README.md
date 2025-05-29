@@ -209,7 +209,7 @@ DQN은 안정적이고 효율적인 학습을 위해 몇 가지 핵심 기법을
 
 ---
 
-## 7. 사용 방법
+## 8. 사용 방법
 
 ```bash
 git clone https://github.com/YourUser/Reinforcement-Learning.git
