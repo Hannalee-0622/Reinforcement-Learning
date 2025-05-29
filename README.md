@@ -136,22 +136,59 @@ DQN은 안정적이고 효율적인 학습을 위해 몇 가지 핵심 기법을
     * 주 네트워크($Q(s,a;\theta)$)와 타겟 네트워크($Q(s,a;\theta^-)$) 생성. 초기에는 두 네트워크의 가중치를 동일하게 설정.
     * 경험 리플레이 버퍼 생성.
 
-2.  **에피소드 반복 (총 `num_episodes` 만큼)**:
-    a.  **환경 초기화**: 에피소드 시작 시 환경을 리셋하여 초기 상태 $s_0$를 받습니다. `total_reward`를 0으로 초기화합니다.
-    b.  **타임스텝 반복 (에피소드 내 최대 스텝 수 또는 종료 조건 만족 시까지)**:
-        i.  **행동 선택**: 현재 상태 $s_t$에서 $\epsilon$-greedy 정책에 따라 행동 $a_t$를 선택합니다.
-        ii. **행동 수행**: 선택한 행동 $a_t$를 환경에 전달하여 다음 상태 $s\_{t+1}$, 보상 $r\_{t+1}$, 종료 여부 `done` 등의 정보를 받습니다.
-        iii. **경험 저장**: 얻어진 경험 $(s\_t, a\_t, r\_{t+1}, s\_{t+1}, \text{done})$을 리플레이 버퍼에 추가합니다.
-        iv. **상태 업데이트**: $s_t \leftarrow s\_{t+1}$. `total_reward`에 $r\_{t+1}$을 더합니다.
-        v.  **종료 조건 확인**: `done`이 True이면 현재 에피소드를 종료합니다.
-    c.  **모델 학습 (`train_model` 함수 호출)**:
-        * 리플레이 버퍼에서 `batch_size`만큼의 경험을 무작위로 샘플링합니다.
-        * 샘플링된 각 경험에 대해, 타겟 네트워크를 사용하여 타겟 Q-값 $y_j$를 계산합니다.
-        * 주 네트워크를 사용하여 예측 Q-값 $Q(s_j, a_j; \theta)$을 계산합니다.
-        * MSE 손실 함수 $L(\theta) = \mathbb{E}[(y_j - Q(s_j, a_j; \theta))^2]$를 최소화하도록 주 네트워크를 업데이트합니다.
-    d.  **타겟 네트워크 업데이트**: 매 `target_update_freq` 에피소드마다 주 네트워크의 가중치를 타겟 네트워크로 복사합니다 ($\theta^- \leftarrow \theta$).
-    e.  **입실론 값 감쇠**:
-        $$\epsilon = \max(\text{epsilon\_min}, \epsilon \times \text{epsilon\_decay})$$
+2. **에피소드 반복 (총 `num_episodes` 만큼)**  
+   a. **환경 초기화**  
+      - 에피소드 시작 시 `state = env.reset()` 으로 초기 상태 \(s_0\) 를 받습니다.  
+      - `total_reward = 0` 으로 초기화합니다.  
+   b. **타임스텝 반복** (에피소드 내 최대 스텝 수 또는 `done==True` 될 때까지)  
+      1. **행동 선택**  
+         ```python
+         if np.random.rand() < epsilon:
+             action = env.action_space.sample()   # 탐색
+         else:
+             action = np.argmax(model.predict(state))  # 활용
+         ```  
+      2. **행동 수행**  
+         ```python
+         next_state, reward, done, info = env.step(action)
+         ```  
+         → 다음 상태 \(s_{t+1}\), 보상 \(r_{t+1}\), 종료 여부 `done` 등을 반환  
+      3. **경험 저장**  
+         ```python
+         replay_buffer.add((state, action, reward, next_state, done))
+         ```  
+      4. **상태·보상 업데이트**  
+         ```python
+         state = next_state
+         total_reward += reward
+         ```  
+      5. **종료 확인**  
+         - `if done: break`  
+   c. **모델 학습** (`train_model` 호출)  
+      - 리플레이 버퍼에서 무작위로 `batch_size` 개의 경험을 샘플링  
+      - 각 경험에 대해  
+        - 타겟 네트워크로 타겟 Q값 \(y_j\) 계산  
+        - 주 네트워크로 예측 Q값 \(Q(s_j,a_j;\theta)\) 계산  
+      - MSE 손실  
+        $$
+          L(\theta)
+          = \mathbb{E}\bigl[(y_j - Q(s_j,a_j;\theta))^2\bigr]
+        $$  
+        를 최소화하도록 한 배치 학습  
+   d. **타겟 네트워크 업데이트**  
+      - 매 `target_update_freq` 에피소드마다  
+        ```python
+        target_model.set_weights(model.get_weights())
+        ```  
+      - 파라미터 동기화 (\(\theta^- \leftarrow \theta\))  
+   e. **입실론 값 감쇠**  
+      ```python
+      epsilon = max(epsilon_min, epsilon * epsilon_decay)
+      ```  
+      또는 LaTeX로:
+      $$
+        \epsilon = \max\bigl(\epsilon_{\min},\,\epsilon\cdot\epsilon_{\text{decay}}\bigr)
+      $$
     f.  **결과 출력**: 현재 에피소드 번호, 총 보상, 현재 입실론 값 등을 출력하여 학습 진행 상황을 모니터링합니다.
 3.  **학습 완료 후**: 학습된 모델을 사용하여 실제 환경에서 에이전트가 어떻게 행동하는지 테스트하고 시각화할 수 있습니다. (코드의 마지막 `rewards` 리스트를 사용한 그래프 플로팅 및 학습된 모델 테스트 부분)
 
