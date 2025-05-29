@@ -43,7 +43,9 @@ Q-러닝은 모델 없이(model-free) 환경에 대한 사전 지식 없이 학�
   
 * **Q-러닝 업데이트 규칙 (시간차 학습, Temporal Difference Learning)**:
     Q-러닝은 시간차 학습을 통해 $Q^*(s,a)$를 반복적으로 추정합니다. 현재의 Q 값 $Q(s,a)$와 시간차 목표(TD Target) $r + \gamma \max_{a'} Q(s',a')$ 사이의 오차를 줄이는 방향으로 Q 값을 업데이트합니다.
-    $Q(s,a) \leftarrow Q(s,a) + \alpha [r + \gamma \max_{a'} Q(s', a') - Q(s,a)]$
+    <p align="center">
+  <img src="https://latex.codecogs.com/png.latex?\dpi{120}&space;Q(s,a)&space;\leftarrow&space;Q(s,a)&space;&plus;&space;\alpha\bigl[r&space;&plus;&space;\gamma\max_{a'}Q(s',a')&space;-&space;Q(s,a)\bigr]" alt="Q-learning update" />
+</p>
     여기서 $\alpha$는 학습률(learning rate)입니다.
 ---
 
